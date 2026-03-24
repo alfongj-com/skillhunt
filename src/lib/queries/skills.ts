@@ -14,7 +14,7 @@ import {
   agentIdentities,
   skillRequestLinks,
 } from "@/lib/db/schema";
-import { eq, desc, sql, and, gte, count, avg } from "drizzle-orm";
+import { eq, desc, sql, and, gte, count, avg, inArray } from "drizzle-orm";
 
 export type SkillCard = {
   id: string;
@@ -93,7 +93,7 @@ async function enrichSkillCards(
     })
     .from(skillToTypeLabels)
     .innerJoin(skillTypeLabels, eq(skillToTypeLabels.typeLabelId, skillTypeLabels.id))
-    .where(sql`${skillToTypeLabels.skillId} = ANY(${skillIds})`);
+    .where(inArray(skillToTypeLabels.skillId, skillIds));
 
   // Get tags for all skills
   const tagsResult = await db
@@ -103,7 +103,7 @@ async function enrichSkillCards(
     })
     .from(skillToTags)
     .innerJoin(skillTags, eq(skillToTags.tagId, skillTags.id))
-    .where(sql`${skillToTags.skillId} = ANY(${skillIds})`);
+    .where(inArray(skillToTags.skillId, skillIds));
 
   const typeMap = new Map<string, string[]>();
   for (const row of typeLabelsResult) {

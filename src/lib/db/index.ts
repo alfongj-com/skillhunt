@@ -1,7 +1,7 @@
 import * as schema from "./schema";
 
 function createDb() {
-  const url = process.env.DATABASE_URL!;
+  const url = process.env.DB_DATABASE_URL || process.env.DB_URL || process.env.DATABASE_URL!;
   // Use Neon serverless driver for Neon URLs, postgres.js for local
   if (url.includes("neon.tech") || url.includes("neon.") || process.env.USE_NEON === "true") {
     // Dynamic import workaround - use require for conditional loading

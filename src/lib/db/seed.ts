@@ -3,9 +3,9 @@ import * as schema from "./schema";
 import { createHash, randomBytes } from "crypto";
 
 async function seed() {
-  const DATABASE_URL = process.env.DATABASE_URL;
+  const DATABASE_URL = process.env.DB_DATABASE_URL || process.env.DB_URL || process.env.DATABASE_URL;
   if (!DATABASE_URL) {
-    console.error("DATABASE_URL is required");
+    console.error("DB_URL or DATABASE_URL is required");
     process.exit(1);
   }
 

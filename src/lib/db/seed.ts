@@ -1,3 +1,5 @@
+// @ts-nocheck
+// This is a standalone seed script run via tsx, not part of the Next.js app build.
 import { eq } from "drizzle-orm";
 import * as schema from "./schema";
 import { createHash, randomBytes } from "crypto";

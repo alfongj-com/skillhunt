@@ -1,18 +1,28 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+// @ts-nocheck
+// This is a standalone seed script run via tsx, not part of the Next.js app build.
 import { eq } from "drizzle-orm";
 import * as schema from "./schema";
 import { createHash, randomBytes } from "crypto";
 
 async function seed() {
-  const DATABASE_URL = process.env.DATABASE_URL;
+  const DATABASE_URL = process.env.DB_DATABASE_URL || process.env.DB_URL || process.env.DATABASE_URL;
   if (!DATABASE_URL) {
-    console.error("DATABASE_URL is required");
+    console.error("DB_URL or DATABASE_URL is required");
     process.exit(1);
   }
 
-  const sql = neon(DATABASE_URL);
-  const db = drizzle(sql, { schema });
+  let db: any;
+  if (DATABASE_URL.includes("neon.tech") || DATABASE_URL.includes("neon.") || process.env.USE_NEON === "true") {
+    const { neon } = await import("@neondatabase/serverless");
+    const { drizzle } = await import("drizzle-orm/neon-http");
+    const sql = neon(DATABASE_URL);
+    db = drizzle(sql, { schema });
+  } else {
+    const { drizzle } = await import("drizzle-orm/postgres-js");
+    const postgres = (await import("postgres")).default;
+    const sql = postgres(DATABASE_URL);
+    db = drizzle(sql, { schema });
+  }
 
   console.log("Seeding database...");
 
@@ -556,6 +566,7 @@ async function seed() {
   console.log(`Created ${requestData.length} requests`);
 
   console.log("Seed complete!");
+  process.exit(0);
 }
 
-seed().catch(console.error);
+seed().catch((err) => { console.error(err); process.exit(1); });

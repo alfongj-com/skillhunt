@@ -42,7 +42,7 @@ Required variables:
 
 | Variable | Description |
 |----------|-------------|
-| `DATABASE_URL` | Neon Postgres connection string |
+| `DATABASE_URL` (or `DB_URL`) | Neon Postgres connection string |
 | `AUTH_SECRET` | Random string for Auth.js session encryption (`openssl rand -base64 32`) |
 | `AUTH_GITHUB_ID` | GitHub OAuth App client ID |
 | `AUTH_GITHUB_SECRET` | GitHub OAuth App client secret |
@@ -77,7 +77,7 @@ Link the GitHub repo to a new Vercel project.
 
 ### 2. Install Neon from Vercel Marketplace
 
-Go to Vercel Dashboard > Storage > Add > Neon Postgres. This will automatically set the `DATABASE_URL` environment variable.
+Go to Vercel Dashboard > Marketplace > Neon Postgres. When installing, set the custom prefix to `DB` so the env var is named `DB_URL`. The app supports both `DB_URL` and `DATABASE_URL`.
 
 ### 3. Set environment variables in Vercel
 
@@ -87,10 +87,10 @@ Add all required env vars from `.env.example` in your Vercel project settings.
 
 ```bash
 # Push schema to Neon
-DATABASE_URL=your-neon-url pnpm db:push
+DB_URL=your-neon-url pnpm db:push
 
 # Seed the database
-DATABASE_URL=your-neon-url pnpm db:seed
+DB_URL=your-neon-url pnpm db:seed
 ```
 
 ### 5. Deploy

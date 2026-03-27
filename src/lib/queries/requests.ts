@@ -6,7 +6,7 @@ import {
   actors,
   skills,
 } from "@/lib/db/schema";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, inArray } from "drizzle-orm";
 
 export type RequestCard = {
   id: string;
@@ -69,7 +69,7 @@ export async function getOpenRequests(limit = 6): Promise<RequestCard[]> {
             count: sql<number>`count(*)`,
           })
           .from(skillRequestLinks)
-          .where(sql`${skillRequestLinks.requestId} = ANY(${requestIds})`)
+          .where(inArray(skillRequestLinks.requestId, requestIds))
           .groupBy(skillRequestLinks.requestId)
       : [];
 
@@ -164,7 +164,7 @@ export async function searchRequests(params: {
             count: sql<number>`count(*)`,
           })
           .from(skillRequestLinks)
-          .where(sql`${skillRequestLinks.requestId} = ANY(${requestIds})`)
+          .where(inArray(skillRequestLinks.requestId, requestIds))
           .groupBy(skillRequestLinks.requestId)
       : [];
   const countMap = new Map(linkedCounts.map((c) => [c.requestId, Number(c.count)]));
